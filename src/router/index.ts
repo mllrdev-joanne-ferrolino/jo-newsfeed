@@ -10,14 +10,37 @@ const routes: Array<RouteConfig> = [
     name: "Home",
     component: Home
   },
+
   {
-    path: "/about",
-    name: "About",
+    path: "/feed",
+    name: "Feed",
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue")
+      import(/* webpackChunkName: "about" */ "../views/Feed.vue"),
+    children: [
+      {
+        path: "/feed/post/:id",
+        name: "PostForm",
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () =>
+          // import(/* webpackChunkName: "about" */ "../views/Post.vue")
+          import(/* webpackChunkName: "about" */ "../components/PostForm.vue")
+      }
+    ]
+  },
+  {
+    path: "/post/:id",
+    name: "Edit",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/EditPost.vue"),
+    props: true
   }
 ];
 

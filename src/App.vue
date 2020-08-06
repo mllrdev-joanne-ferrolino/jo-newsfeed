@@ -1,13 +1,26 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-view :post-list="posts" @posts="handlePosts" />
     </div>
-    <router-view />
   </div>
 </template>
+<script lang="ts">
+import { defineComponent, reactive } from "@vue/composition-api";
+import { Post } from "@/models/post";
+export default defineComponent({
+  setup() {
+    const posts: Post[] = reactive([]);
 
+    function handlePosts(postList: Post[]) {
+      postList.forEach(element => {
+        posts.push(element);
+      });
+    }
+    return { posts, handlePosts };
+  }
+});
+</script>
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -15,6 +28,7 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  background-color: #dddfe2;
 }
 
 #nav {

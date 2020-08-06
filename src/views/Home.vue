@@ -1,18 +1,48 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <router-link to="/feed">Navigate to Newsfeed</router-link>
+    <router-view :post-list="posts" @posts="handlePosts" />
   </div>
 </template>
 
-<script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
-
-export default {
+<script lang="ts">
+import { defineComponent, reactive } from "@vue/composition-api";
+import { Post } from "@/models/post";
+export default defineComponent({
   name: "Home",
-  components: {
-    HelloWorld
+  setup() {
+    const posts: Post[] = reactive([]);
+    function handlePosts(postList: Post[]) {
+      postList.forEach(element => {
+        posts.push(element);
+      });
+    }
+    return { posts, handlePosts };
   }
-};
+});
 </script>
+
+<style lang="scss" scoped>
+.container {
+  margin: auto;
+  background-color: gray;
+  padding: 10px;
+  .panel {
+    background-color: white;
+    border-radius: 2px;
+  }
+}
+textarea {
+  width: 80%;
+  margin: auto;
+}
+.post {
+  border: 1px solid black;
+  padding: 5px;
+  text-align: left;
+  .date {
+    text-align: right;
+    font-size: 10px;
+  }
+}
+</style>
