@@ -3,7 +3,9 @@ import VueRouter, { RouteConfig } from "vue-router";
 import Home from "../views/Home.vue";
 
 Vue.use(VueRouter);
-
+function loadView(view: string) {
+  return () => import(/* webpackChunkName: "about" */ `../views/${view}.vue`);
+}
 const routes: Array<RouteConfig> = [
   {
     path: "/",
@@ -14,32 +16,12 @@ const routes: Array<RouteConfig> = [
   {
     path: "/feed",
     name: "Feed",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Feed.vue"),
-    children: [
-      {
-        path: "/feed/post/:id",
-        name: "PostForm",
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () =>
-          // import(/* webpackChunkName: "about" */ "../views/Post.vue")
-          import(/* webpackChunkName: "about" */ "../components/PostForm.vue")
-      }
-    ]
+    component: loadView("Feed")
   },
   {
     path: "/post/:id",
     name: "Edit",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/EditPost.vue"),
+    component: loadView("EditPost"),
     props: true
   }
 ];
