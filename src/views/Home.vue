@@ -1,24 +1,15 @@
 <template>
   <div class="home">
     <router-link to="/feed">Navigate to Newsfeed</router-link>
-    <router-view :post-list="posts" @posts="handlePosts" />
+    <router-view />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from "@vue/composition-api";
-import { Post } from "@/models/post";
+import { defineComponent } from "@vue/composition-api";
+
 export default defineComponent({
-  name: "Home",
-  setup() {
-    const posts: Post[] = reactive([]);
-    function handlePosts(postList: Post[]) {
-      postList.forEach(element => {
-        posts.push(element);
-      });
-    }
-    return { posts, handlePosts };
-  }
+  name: "Home"
 });
 </script>
 

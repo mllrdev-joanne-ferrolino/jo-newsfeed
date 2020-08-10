@@ -7,3 +7,19 @@ export type Post = {
   date: string;
   comments?: Comment[];
 };
+
+// interface IPost {
+//   index: number;
+//   id: number;
+//   message: string;
+//   date: string;
+//   comments?: Comment[];
+// };
+
+// export const post: IPost = {
+//   index: 0,
+//   id: 0,
+//   message: "",
+//   date: "",
+//   comments: []
+// }

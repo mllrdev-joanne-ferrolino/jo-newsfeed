@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import Home from "../views/Home.vue";
+import { RouteNames } from "./route-names";
 
 Vue.use(VueRouter);
 function loadView(view: string) {
@@ -9,18 +10,18 @@ function loadView(view: string) {
 const routes: Array<RouteConfig> = [
   {
     path: "/",
-    name: "Home",
+    name: RouteNames.HOME,
     component: Home
   },
 
   {
     path: "/feed",
-    name: "Feed",
+    name: RouteNames.FEED,
     component: loadView("Feed")
   },
   {
-    path: "/post/:id",
-    name: "Edit",
+    path: "/posts/:id/edit",
+    name: RouteNames.EDIT_POST,
     component: loadView("EditPost"),
     props: true
   }

@@ -1,22 +1,18 @@
 <template>
   <div class="panel">
-    <div class="row">
-      <div class="col">
-        <form @submit.prevent="handlePost">
-          <div v-if="isEmpty">Please fill up message.</div>
-          <span
-            ><textarea
-              class="form-control"
-              v-model="message"
-              placeholder="What's on your mind?"
-            ></textarea
-          ></span>
-          <div>
-            <input class="btn btn-primary" type="submit" :value="editLabel" />
-          </div>
-        </form>
+    <form @submit.prevent="handlePost">
+      <div v-if="isEmpty">Please fill up message.</div>
+      <span
+        ><textarea
+          class="form-control"
+          v-model="message"
+          placeholder="What's on your mind?"
+        ></textarea
+      ></span>
+      <div>
+        <input class="btn btn-primary" type="submit" :value="editLabel" />
       </div>
-    </div>
+    </form>
   </div>
 </template>
 
@@ -29,10 +25,11 @@ import {
 } from "@vue/composition-api";
 import router from "../router";
 import { Post } from "@/models/post";
+import { useStore } from "@/composables/use-store";
 
 export default defineComponent({
   name: "post-form",
-  props: ["messageToEdit", "id", "obj", "postList"],
+  props: ["messageToEdit", "id", "postItem", "postList"],
   setup(props, { emit }) {
     const message = ref("");
     const editLabel = ref("Post");
@@ -40,6 +37,7 @@ export default defineComponent({
     let post: Post = { index: 0, id: 0, message: "", date: "", comments: [] };
     const isEmpty = ref(false);
     const posts = reactive(props.postList);
+    const { addPost, updatePost } = useStore();
 
     onMounted(() => {
       if (props.messageToEdit) {
@@ -61,10 +59,11 @@ export default defineComponent({
       } else {
         if (props.id) {
           post.id = props.id;
-          post.comments = props.obj.comments;
+          post.comments = props.postItem.comments;
           post.message = message.value;
           post.date = new Date().toLocaleString();
-          posts[getIndex(props.id)] = post;
+          post.index = getIndex(props.id);
+          updatePost(post);
           router.push({ name: "Feed" });
         } else {
           post = {
@@ -74,7 +73,7 @@ export default defineComponent({
             message: message.value,
             date: new Date().toLocaleString()
           };
-          posts.push(post);
+          addPost(post);
           postItemId.value++;
         }
         emit("postList", posts);

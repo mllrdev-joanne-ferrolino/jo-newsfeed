@@ -35,6 +35,7 @@
 import { defineComponent, ref, reactive } from "@vue/composition-api";
 import { Comment } from "@/models/comment";
 import CommentForm from "@/components/CommentForm.vue";
+import { useComment } from "@/composables/use-comment";
 
 export default defineComponent({
   name: "comment-item",
@@ -43,14 +44,11 @@ export default defineComponent({
   },
   props: ["post", "comment", "index"],
   setup(props) {
-    const commentList: Comment[] = reactive(props.post.comments);
+    const commentList = reactive<Comment[]>(props.post.comments);
     const textComment = ref("");
     const commentToEdit = ref("");
     const isEmpty = ref(false);
-
-    function deleteComment(index: number) {
-      commentList.splice(index, 1);
-    }
+    const { deleteComment } = useComment();
 
     function editComment(index: number) {
       commentList[index].isSelected = true;

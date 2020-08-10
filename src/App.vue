@@ -1,25 +1,12 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-view :post-list="posts" @posts="handlePosts" />
+      <router-view />
     </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive } from "@vue/composition-api";
-import { Post } from "@/models/post";
-export default defineComponent({
-  setup() {
-    const posts: Post[] = reactive([]);
-
-    function handlePosts(postList: Post[]) {
-      postList.forEach(element => {
-        posts.push(element);
-      });
-    }
-    return { posts, handlePosts };
-  }
-});
+export default {};
 </script>
 <style lang="scss">
 #app {

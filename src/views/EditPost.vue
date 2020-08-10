@@ -1,37 +1,42 @@
 <template>
   <div class="edit-post-panel">
-    <router-link v-slot="{ navigate }" :to="{ name: 'Feed' }">
+    <router-link v-slot="{ navigate }" :to="goToFeed">
       <div class="tab" @click="navigate">
         Cancel
       </div>
     </router-link>
     <post-form
       :message-to-edit="message"
-      :id="postId"
-      :obj="posts[getIndex(id)]"
-      :post-list="posts"
+      :postItem="storePosts[postIndex]"
+      :post-list="storePosts"
+      :id="id"
     ></post-form>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from "@vue/composition-api";
+import { defineComponent, ref, computed } from "@vue/composition-api";
 import PostForm from "@/components/PostForm.vue";
-import { Post } from "../models/post";
+import { useStore } from "@/composables/use-store";
 export default defineComponent({
   name: "edit-post",
   components: { PostForm },
   props: ["postList", "id", "post"],
-  setup(props) {
-    const posts = reactive(props.postList);
-    const postId = props.id;
-    function getIndex(id: number) {
-      return posts.map((e: Post) => e.id).indexOf(id);
-    }
+  setup(props, { root }) {
+    const { storePosts, getIndex } = useStore();
+    const postIndex = getIndex(props.id);
+    const goToFeed = computed(() => ({
+      name: root.$routeNames.FEED,
+      params: { id: props.id }
+    }));
+    const message = ref(storePosts[postIndex.value].message);
 
-    const message = reactive(posts[getIndex(props.id)].message);
-
-    return { posts, message, postId, getIndex };
+    return {
+      message,
+      goToFeed,
+      storePosts,
+      postIndex
+    };
   }
 });
 </script>

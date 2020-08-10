@@ -5,10 +5,7 @@
         <div class="post">
           <div class="edit">
             <span>
-              <router-link
-                v-slot="{ navigate }"
-                :to="{ name: 'Edit', params: { id: post.id } }"
-              >
+              <router-link v-slot="{ navigate }" :to="goToEditPage">
                 <span
                   ><button class="btn btn-primary" @click="navigate">
                     Edit
@@ -26,14 +23,7 @@
             <span class="date">Posted {{ post.date }}</span>
           </p>
           <p>{{ post.message }}</p>
-          <comment-item
-            v-for="(comment, index) in post.comments"
-            :key="comment.id"
-            :post="post"
-            :comment="comment"
-            :index="index"
-          ></comment-item>
-          <comment-form :post="post"></comment-form>
+          <post-comment :post="post"></post-comment>
         </div>
       </div>
     </div>
@@ -41,29 +31,45 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from "@vue/composition-api";
+import { defineComponent, reactive, computed } from "@vue/composition-api";
 import CommentItem from "@/components/CommentItem.vue";
 import CommentForm from "@/components/CommentForm.vue";
+import PostComment from "@/components/PostComment.vue";
 import { Comment } from "@/models/comment";
 import { Post } from "@/models/post";
+import { PropType } from "vue";
+import { useStore } from "@/composables/use-store";
+
 export default defineComponent({
   name: "post-item",
   components: {
     CommentItem,
-    CommentForm
+    CommentForm,
+    PostComment
   },
   props: ["post", "id", "postList"],
-  setup(props) {
-    const commentList: Comment[] = reactive(props.post.comments);
-    const posts: Post[] = reactive(props.postList);
-
-    function deletePost(id: number) {
-      posts.splice(posts.indexOf(posts.find((e: Post) => e.id === id)!), 1);
-    }
+  // props: {
+  //   id: {
+  //     type: Number,
+  //     required: true
+  //   },
+  //   post: {
+  //     type: Object
+  //   }
+  // },
+  setup(props, { root }) {
+    const { deletePost } = useStore();
+    const commentList = reactive<Comment[]>(props.post.comments ?? []);
+    // const posts = reactive<Post[]>(props.postList ?? []);
+    const goToEditPage = computed(() => ({
+      name: root.$routeNames.EDIT_POST,
+      params: { id: props.post.id }
+    }));
 
     return {
       deletePost,
-      commentList
+      commentList,
+      goToEditPage
     };
   }
 });
