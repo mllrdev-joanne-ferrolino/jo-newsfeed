@@ -19,7 +19,6 @@ export function useStore() {
   function updatePost(post: Post) {
     storePosts[post.index] = post;
   }
-  // const storePosts = computed(() => Store.posts);
   return {
     addPost,
     deletePost,

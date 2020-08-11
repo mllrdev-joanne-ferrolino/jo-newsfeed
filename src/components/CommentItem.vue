@@ -5,25 +5,21 @@
         Commented {{ comment.date }} -
         {{ comment.message }}
       </div>
-      <div class="edit" v-if="comment.isSelected">
-        <textarea class="form-control" v-model="commentToEdit" />
-        <button class="btn btn-primary" @click="updateComment(index)">
-          Update
-        </button>
-        <button
-          class="btn btn-primary"
-          @click="comment.isSelected = !comment.isSelected"
-        >
-          Cancel
-        </button>
-        <div v-if="isEmpty">Please fill up comment.</div>
-      </div>
+      <comment-form
+        v-if="comment.isSelected"
+        :message="commentToEdit"
+        :post="post"
+        :comment="comment"
+      ></comment-form>
 
       <span class="buttons" v-if="!comment.isSelected">
-        <button class="btn btn-primary btn-sm" @click="editComment(index)">
+        <button class="btn btn-primary btn-sm" @click="selectComment(index)">
           Edit
         </button>
-        <button class="btn btn-primary btn-sm" @click="deleteComment(index)">
+        <button
+          class="btn btn-primary btn-sm"
+          @click="deleteComment(comment.postId, index)"
+        >
           Delete
         </button>
       </span>
@@ -32,49 +28,53 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive } from "@vue/composition-api";
+import { defineComponent, ref, reactive, PropType } from "@vue/composition-api";
 import { Comment } from "@/models/comment";
 import CommentForm from "@/components/CommentForm.vue";
 import { useComment } from "@/composables/use-comment";
+import { useStore } from "@/composables/use-store";
+import { Post } from "@/models/post";
 
 export default defineComponent({
   name: "comment-item",
   components: {
     CommentForm
   },
-  props: ["post", "comment", "index"],
+  props: {
+    post: {
+      type: Object as PropType<Post>,
+      required: true
+    },
+    comment: {
+      type: Object as PropType<Comment>,
+      required: true
+    },
+    index: {
+      type: Number,
+      required: true
+    }
+  },
   setup(props) {
-    const commentList = reactive<Comment[]>(props.post.comments);
+    const commentList = reactive<Comment[]>(props.post?.comments ?? []);
     const textComment = ref("");
     const commentToEdit = ref("");
     const isEmpty = ref(false);
     const { deleteComment } = useComment();
+    const { storePosts } = useStore();
 
-    function editComment(index: number) {
+    function selectComment(index: number) {
       commentList[index].isSelected = true;
       commentToEdit.value = commentList[index].message;
-    }
-
-    function updateComment(index: number) {
-      if (!commentToEdit.value) {
-        isEmpty.value = true;
-      } else {
-        const newComment = commentList[index];
-        newComment.message = commentToEdit.value;
-        newComment.date = new Date().toLocaleString();
-        newComment.isSelected = false;
-        isEmpty.value = false;
-      }
     }
 
     return {
       commentList,
       textComment,
       deleteComment,
-      editComment,
-      updateComment,
+      selectComment,
       commentToEdit,
-      isEmpty
+      isEmpty,
+      storePosts
     };
   }
 });

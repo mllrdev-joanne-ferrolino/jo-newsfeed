@@ -10,8 +10,7 @@ function loadView(view: string) {
 const routes: Array<RouteConfig> = [
   {
     path: "/",
-    name: RouteNames.HOME,
-    component: Home
+    redirect: "/feed"
   },
 
   {

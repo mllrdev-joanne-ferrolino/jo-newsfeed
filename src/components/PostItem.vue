@@ -1,43 +1,43 @@
 <template>
-  <div class="row">
-    <div class="col">
-      <div class="panel">
-        <div class="post">
-          <div class="edit">
-            <span>
-              <router-link v-slot="{ navigate }" :to="goToEditPage">
-                <span
-                  ><button class="btn btn-primary" @click="navigate">
-                    Edit
-                  </button></span
-                >
-              </router-link>
-            </span>
+  <div class="panel">
+    <div class="post">
+      <div class="edit">
+        <span>
+          <router-link v-slot="{ navigate }" :to="goToEditPage">
             <span
-              ><button class="btn btn-primary" @click="deletePost(post.id)">
-                Delete
+              ><button class="btn btn-primary" @click="navigate">
+                Edit
               </button></span
             >
-          </div>
-          <p>
-            <span class="date">Posted {{ post.date }}</span>
-          </p>
-          <p>{{ post.message }}</p>
-          <post-comment :post="post"></post-comment>
-        </div>
+          </router-link>
+        </span>
+        <span
+          ><button class="btn btn-primary" @click="deletePost(post.id)">
+            Delete
+          </button></span
+        >
       </div>
+      <p>
+        <span class="date">Posted {{ post.date }}</span>
+      </p>
+      <p>{{ post.message }}</p>
+      <post-comment :post="post"></post-comment>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, computed } from "@vue/composition-api";
+import {
+  defineComponent,
+  reactive,
+  computed,
+  PropType
+} from "@vue/composition-api";
 import CommentItem from "@/components/CommentItem.vue";
 import CommentForm from "@/components/CommentForm.vue";
 import PostComment from "@/components/PostComment.vue";
 import { Comment } from "@/models/comment";
 import { Post } from "@/models/post";
-import { PropType } from "vue";
 import { useStore } from "@/composables/use-store";
 
 export default defineComponent({
@@ -47,20 +47,19 @@ export default defineComponent({
     CommentForm,
     PostComment
   },
-  props: ["post", "id", "postList"],
-  // props: {
-  //   id: {
-  //     type: Number,
-  //     required: true
-  //   },
-  //   post: {
-  //     type: Object
-  //   }
-  // },
+  props: {
+    post: {
+      type: Object as PropType<Post>,
+      required: true
+    },
+    id: {
+      type: Number,
+      required: true
+    }
+  },
   setup(props, { root }) {
     const { deletePost } = useStore();
     const commentList = reactive<Comment[]>(props.post.comments ?? []);
-    // const posts = reactive<Post[]>(props.postList ?? []);
     const goToEditPage = computed(() => ({
       name: root.$routeNames.EDIT_POST,
       params: { id: props.post.id }

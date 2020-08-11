@@ -12,10 +12,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from "@vue/composition-api";
+import { defineComponent, reactive, PropType } from "@vue/composition-api";
 import CommentItem from "@/components/CommentItem.vue";
 import CommentForm from "@/components/CommentForm.vue";
-import { PropType } from "vue";
 import { Post } from "@/models/post";
 
 export default defineComponent({
@@ -26,12 +25,12 @@ export default defineComponent({
   },
   props: {
     post: {
-      type: Object,
+      type: Object as PropType<Post>,
       required: true
     }
   },
   setup(props) {
-    const commentList = reactive(props.post.comments);
+    const commentList = reactive(props.post.comments ?? []);
     return { commentList };
   }
 });

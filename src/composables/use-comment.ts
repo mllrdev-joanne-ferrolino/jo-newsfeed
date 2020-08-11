@@ -1,40 +1,23 @@
 import { Comment } from "./../models/comment";
 import { useStore } from "./use-store";
-import { reactive } from "@vue/composition-api";
+import { reactive, computed } from "@vue/composition-api";
 
 export function useComment() {
-  const { storePosts } = useStore();
-  const comment = reactive<Comment>({
-    id: 0,
-    postId: 0,
-    message: "",
-    date: "",
-    isSelected: false
-  });
-
-  function getPost(postId: number) {
-    return storePosts.find(p => p.id === postId);
-  }
-
-  const post = getPost(comment.postId);
+  const { storePosts, getIndex } = useStore();
 
   function addComment(comment: Comment) {
-    const post = getPost(comment.postId);
+    const post = storePosts.find(p => p.id === comment.postId);
     if (post) {
       post?.comments?.push(comment);
+      console.log(`success - comment added ${post.message}`);
     } else {
-      console.log(`fail - post id = ${comment.postId}`);
+      console.log(`fail in post id ${comment.postId}`);
     }
   }
-  function deleteComment(index: number) {
-    const post = getPost(comment.postId);
-    if (post) {
-      post?.comments?.splice(index, 1);
-    } else {
-      console.log(`fail - post = ${storePosts}`);
-    }
+  function deleteComment(postId: number, index: number) {
+    const postIndex = getIndex(postId).value;
+    storePosts[postIndex].comments?.splice(index, 1);
   }
 
-  // const comments = reactive(storePosts)
   return { addComment, deleteComment };
 }

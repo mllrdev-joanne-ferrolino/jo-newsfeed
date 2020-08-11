@@ -21,7 +21,8 @@ import {
   defineComponent,
   ref,
   onMounted,
-  reactive
+  reactive,
+  PropType
 } from "@vue/composition-api";
 import router from "../router";
 import { Post } from "@/models/post";
@@ -29,15 +30,29 @@ import { useStore } from "@/composables/use-store";
 
 export default defineComponent({
   name: "post-form",
-  props: ["messageToEdit", "id", "postItem", "postList"],
-  setup(props, { emit }) {
+  props: {
+    messageToEdit: {
+      type: String
+    },
+    id: {
+      type: Number
+    },
+    postItem: {
+      type: Object as PropType<Post>
+    },
+    postList: {
+      type: Array as PropType<Post[]>,
+      required: true
+    }
+  },
+  setup(props, { emit, root }) {
     const message = ref("");
     const editLabel = ref("Post");
     const postItemId = ref(0);
     let post: Post = { index: 0, id: 0, message: "", date: "", comments: [] };
     const isEmpty = ref(false);
     const posts = reactive(props.postList);
-    const { addPost, updatePost } = useStore();
+    const { addPost, updatePost, getIndex } = useStore();
 
     onMounted(() => {
       if (props.messageToEdit) {
@@ -49,22 +64,18 @@ export default defineComponent({
         postItemId.value = posts[posts.length - 1].id;
       }
     });
-
-    function getIndex(id: number) {
-      return posts.map((e: Post) => e.id).indexOf(id);
-    }
     function handlePost() {
       if (!message.value) {
         isEmpty.value = true;
       } else {
         if (props.id) {
           post.id = props.id;
-          post.comments = props.postItem.comments;
+          post.comments = props.postItem?.comments;
           post.message = message.value;
           post.date = new Date().toLocaleString();
-          post.index = getIndex(props.id);
+          post.index = getIndex(props.id).value;
           updatePost(post);
-          router.push({ name: "Feed" });
+          router.push({ name: root.$routeNames.FEED });
         } else {
           post = {
             index: 0,

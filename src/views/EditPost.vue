@@ -17,11 +17,17 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from "@vue/composition-api";
 import PostForm from "@/components/PostForm.vue";
+import { Post } from "@/models/post";
 import { useStore } from "@/composables/use-store";
 export default defineComponent({
   name: "edit-post",
   components: { PostForm },
-  props: ["postList", "id", "post"],
+  props: {
+    id: {
+      type: Number,
+      required: true
+    }
+  },
   setup(props, { root }) {
     const { storePosts, getIndex } = useStore();
     const postIndex = getIndex(props.id);
