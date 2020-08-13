@@ -8,10 +8,10 @@
       <comment-form
         class="edit-comment"
         v-if="comment.isSelected"
-        :message="commentToEdit"
-        :post="post"
+        :message="textComment"
         :comment="comment"
         :index="index"
+        :postId="comment.postId"
       ></comment-form>
 
       <span class="buttons" v-if="!comment.isSelected">
@@ -30,11 +30,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, PropType } from "@vue/composition-api";
+import { defineComponent, ref, PropType } from "@vue/composition-api";
 import { IComment } from "@/models/comment";
 import CommentForm from "@/components/CommentForm.vue";
 import { useComment } from "@/composables/use-comment";
-import { IPost } from "@/models/post";
 
 export default defineComponent({
   name: "comment-item",
@@ -42,10 +41,6 @@ export default defineComponent({
     CommentForm
   },
   props: {
-    post: {
-      type: Object as PropType<IPost>,
-      required: true
-    },
     comment: {
       type: Object as PropType<IComment>,
       required: true
@@ -56,23 +51,19 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const commentList = reactive<IComment[]>(props.post?.comments ?? []);
     const textComment = ref("");
-    const commentToEdit = ref("");
     const isEmpty = ref(false);
-    const { deleteComment } = useComment();
+    const { deleteComment, getSelectedComment } = useComment();
 
     function selectComment(index: number) {
-      commentList[index].isSelected = true;
-      commentToEdit.value = commentList[index].message;
+      const commentItem = getSelectedComment(props.comment.postId, index);
+      textComment.value = commentItem.message;
     }
 
     return {
-      commentList,
-      textComment,
       deleteComment,
       selectComment,
-      commentToEdit,
+      textComment,
       isEmpty
     };
   }

@@ -8,11 +8,9 @@
         </div>
 
         <post-item
-          v-for="(post, index) in storePosts"
+          v-for="post in storePosts"
           :key="post.id"
           :post="post"
-          :id="index"
-          :post-list="storePosts"
         ></post-item>
       </div>
     </div>

@@ -1,5 +1,5 @@
-import { reactive, computed } from "@vue/composition-api";
-import { IPost } from "../models/post";
+import { IPost } from "./../models/post";
+import { reactive } from "@vue/composition-api";
 
 export const Store = {
   posts: [] as IPost[]
@@ -14,14 +14,15 @@ export function useStore() {
     comments: []
   };
   function getIndex(id: number) {
-    return computed(() => storePosts.findIndex((e: IPost) => e.id === id));
+    return storePosts.findIndex((p: IPost) => p.id === id);
   }
   function getPost(id: number) {
-    return storePosts.find(p => p.id === id) ?? post;
+    return storePosts.find((p: IPost) => p.id === id) ?? post;
   }
   return {
     getIndex,
     getPost,
-    storePosts
+    storePosts,
+    post
   };
 }

@@ -5,9 +5,8 @@
       :key="comment.id"
       :index="index"
       :comment="comment"
-      :post="post"
     ></comment-item>
-    <comment-form class="add-comment" :post="post"></comment-form>
+    <comment-form class="add-comment" :postId="post.id"></comment-form>
   </div>
 </template>
 

@@ -38,13 +38,16 @@ export default defineComponent({
       type: String,
       required: false
     },
-    id: {
-      type: Number,
-      required: false
-    },
     postItem: {
       type: Object as PropType<IPost>,
-      required: false
+      required: false,
+      default: () => ({
+        index: 0,
+        id: 0,
+        comments: [],
+        message: "",
+        date: ""
+      })
     }
   },
   setup(props, { root }) {
@@ -61,7 +64,7 @@ export default defineComponent({
       if (!message.value) {
         isEmpty.value = true;
       } else {
-        if (props.id) {
+        if (props.postItem.id) {
           updatePost(message.value, props.postItem?.comments ?? []);
           router.push({ name: root.$routeNames.FEED });
         } else {

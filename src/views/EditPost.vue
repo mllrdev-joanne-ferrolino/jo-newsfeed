@@ -5,17 +5,12 @@
         Cancel
       </div>
     </router-link>
-    <post-form
-      :message-to-edit="message"
-      :postItem="getPost(id)"
-      :post-list="storePosts"
-      :id="id"
-    ></post-form>
+    <post-form :message-to-edit="message" :postItem="getPost(id)"></post-form>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from "@vue/composition-api";
+import { defineComponent, computed } from "@vue/composition-api";
 import PostForm from "@/components/PostForm.vue";
 import { useStore } from "@/composables/use-store";
 export default defineComponent({
@@ -28,16 +23,15 @@ export default defineComponent({
     }
   },
   setup(props, { root }) {
-    const { storePosts, getPost } = useStore();
+    const { getPost } = useStore();
     const goToFeed = computed(() => ({
       name: root.$routeNames.FEED,
       params: { id: props.id }
     }));
-    const message = ref(getPost(props.id).message);
+    const message = getPost(props.id).message;
     return {
       message,
       goToFeed,
-      storePosts,
       getPost
     };
   }

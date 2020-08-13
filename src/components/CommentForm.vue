@@ -29,25 +29,21 @@
 import {
   defineComponent,
   ref,
-  reactive,
   onMounted,
   PropType
 } from "@vue/composition-api";
 import { useComment } from "@/composables/use-comment";
-import { IPost } from "@/models/post";
 import { IComment } from "@/models/comment";
 export default defineComponent({
   name: "comment-form",
   props: {
     message: {
-      type: String
-    },
-    post: {
-      type: Object as PropType<IPost>,
-      required: true
+      type: String,
+      required: false
     },
     comment: {
       type: Object as PropType<IComment>,
+      required: false,
       default: () => ({
         id: 0,
         postId: 0,
@@ -58,19 +54,19 @@ export default defineComponent({
     },
     index: {
       type: Number,
+      required: false,
       default: 0
+    },
+    postId: {
+      type: Number,
+      required: true
     }
   },
   setup(props) {
     const textComment = ref("");
     const isEmpty = ref(false);
-    const commentList = reactive<IComment[]>(props.post.comments ?? []);
-    const commentId = ref(0);
     const { addComment, updateComment, Label } = useComment();
     onMounted(() => {
-      if (commentList.length) {
-        commentId.value = commentList[commentList.length - 1].id;
-      }
       if (props.message) {
         textComment.value = props.message;
       }
@@ -82,16 +78,7 @@ export default defineComponent({
         if (props.message) {
           updateComment(props.comment.postId, textComment.value, props.index);
         } else {
-          // const comment: IComment = {
-          //   id: commentId.value + 1,
-          //   postId: props.post.id,
-          //   message: textComment.value,
-          //   date: new Date().toLocaleString(),
-          //   isSelected: false,
-          // };
-          // addComment(comment);
-          addComment(commentId.value + 1, props.post.id, textComment.value);
-          commentId.value++;
+          addComment(props.postId, textComment.value);
           textComment.value = "";
         }
         isEmpty.value = false;
@@ -102,8 +89,6 @@ export default defineComponent({
       handleComment,
       textComment,
       isEmpty,
-      commentList,
-      commentId,
       Label
     };
   }

@@ -39,10 +39,6 @@ export default defineComponent({
     post: {
       type: Object as PropType<IPost>,
       required: true
-    },
-    id: {
-      type: Number,
-      required: true
     }
   },
   setup(props, { root }) {

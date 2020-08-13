@@ -6,30 +6,53 @@ export function useComment() {
     COMMENT = "Comment",
     UPDATE = "Update"
   }
-  const { storePosts, getIndex } = useStore();
-  function addComment(id: number, postId: number, message: string) {
+  const { storePosts, getIndex, getPost } = useStore();
+  function getCommentList(postId: number) {
+    const postIndex = getIndex(postId);
+    return storePosts[postIndex].comments ?? [];
+  }
+
+  function getCommentId(postId: number) {
+    const comments = getCommentList(postId);
+    return comments.length ? comments[comments.length - 1].id : 0;
+  }
+
+  function addComment(postId: number, message: string) {
+    let commentId = getCommentId(postId);
     const comment: IComment = {
-      id: id,
+      id: commentId + 1,
       postId: postId,
       message: message,
       date: new Date().toLocaleString(),
       isSelected: false
     };
-    const post = storePosts.find(p => p.id === comment.postId);
-    post?.comments?.push(comment);
+    const post = getPost(postId);
+    post.comments?.push(comment);
+    commentId++;
   }
   function deleteComment(postId: number, index: number) {
-    const postIndex = getIndex(postId).value;
-    storePosts[postIndex].comments?.splice(index, 1);
+    const comments = getCommentList(postId);
+    comments.splice(index, 1);
   }
 
   function updateComment(postId: number, message: string, index: number) {
-    const postIndex = getIndex(postId).value;
-    const commentItem = storePosts[postIndex].comments![index];
+    const comments = getCommentList(postId);
+    const commentItem = comments[index];
     commentItem.message = message;
     commentItem.date = new Date().toLocaleString();
     commentItem.isSelected = false;
   }
 
-  return { addComment, deleteComment, updateComment, Label };
+  function getSelectedComment(postId: number, index: number) {
+    const comments = getCommentList(postId);
+    comments[index].isSelected = true;
+    return comments[index];
+  }
+  return {
+    addComment,
+    deleteComment,
+    updateComment,
+    getSelectedComment,
+    Label
+  };
 }
