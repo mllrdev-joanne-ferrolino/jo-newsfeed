@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div v-if="isEmpty">Please fill up comment.</div>
     <form @submit.prevent="handleComment" class="form">
       <textarea
         class="form-control"
@@ -7,16 +8,19 @@
         v-model="textComment"
       ></textarea>
       <span class="buttons">
-        <input class="btn btn-primary btn-sm" type="submit" :value="label" />
         <input
           class="btn btn-primary btn-sm"
-          v-if="isEditMode"
+          type="submit"
+          :value="message ? Label.UPDATE : Label.COMMENT"
+        />
+        <input
+          class="btn btn-primary btn-sm"
+          v-if="message"
           @click="comment.isSelected = !comment.isSelected"
           value="Cancel"
           type="button"
         />
       </span>
-      <div v-if="isEmpty">Please fill up comment.</div>
     </form>
   </div>
 </template>
@@ -30,8 +34,8 @@ import {
   PropType
 } from "@vue/composition-api";
 import { useComment } from "@/composables/use-comment";
-import { Post } from "@/models/post";
-import { Comment } from "@/models/comment";
+import { IPost } from "@/models/post";
+import { IComment } from "@/models/comment";
 export default defineComponent({
   name: "comment-form",
   props: {
@@ -39,32 +43,36 @@ export default defineComponent({
       type: String
     },
     post: {
-      type: Object as PropType<Post>,
+      type: Object as PropType<IPost>,
       required: true
     },
     comment: {
-      type: Object as PropType<Comment>
+      type: Object as PropType<IComment>,
+      default: () => ({
+        id: 0,
+        postId: 0,
+        message: "",
+        date: "",
+        isSelected: false
+      })
+    },
+    index: {
+      type: Number,
+      default: 0
     }
   },
   setup(props) {
     const textComment = ref("");
     const isEmpty = ref(false);
-    const commentList = reactive<Comment[]>(props.post.comments ?? []);
+    const commentList = reactive<IComment[]>(props.post.comments ?? []);
     const commentId = ref(0);
-    const label = ref("Comment");
-    const isEditMode = ref(false);
-    const commentItem = reactive(
-      props.comment ?? { message: "", date: "", isSelected: false }
-    );
-    const { addComment } = useComment();
+    const { addComment, updateComment, Label } = useComment();
     onMounted(() => {
       if (commentList.length) {
         commentId.value = commentList[commentList.length - 1].id;
       }
       if (props.message) {
         textComment.value = props.message;
-        label.value = "Update";
-        isEditMode.value = true;
       }
     });
     function handleComment() {
@@ -72,18 +80,17 @@ export default defineComponent({
         isEmpty.value = true;
       } else {
         if (props.message) {
-          commentItem.message = textComment.value;
-          commentItem.date = new Date().toLocaleString();
-          commentItem.isSelected = false;
+          updateComment(props.comment.postId, textComment.value, props.index);
         } else {
-          const comment = {
-            id: commentId.value + 1,
-            postId: props.post.id,
-            message: textComment.value,
-            date: new Date().toLocaleString(),
-            isSelected: false
-          };
-          addComment(comment);
+          // const comment: IComment = {
+          //   id: commentId.value + 1,
+          //   postId: props.post.id,
+          //   message: textComment.value,
+          //   date: new Date().toLocaleString(),
+          //   isSelected: false,
+          // };
+          // addComment(comment);
+          addComment(commentId.value + 1, props.post.id, textComment.value);
           commentId.value++;
           textComment.value = "";
         }
@@ -97,9 +104,7 @@ export default defineComponent({
       isEmpty,
       commentList,
       commentId,
-      label,
-      isEditMode,
-      commentItem
+      Label
     };
   }
 });

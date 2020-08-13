@@ -1,8 +1,5 @@
 <template>
-  <div class="home">
-    <router-link to="/feed">Navigate to Newsfeed</router-link>
-    <router-view />
-  </div>
+  <div class="home"></div>
 </template>
 
 <script lang="ts">

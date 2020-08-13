@@ -4,11 +4,9 @@
       <div class="edit">
         <span>
           <router-link v-slot="{ navigate }" :to="goToEditPage">
-            <span
-              ><button class="btn btn-primary" @click="navigate">
-                Edit
-              </button></span
-            >
+            <button class="btn btn-primary" @click="navigate">
+              Edit
+            </button>
           </router-link>
         </span>
         <span
@@ -27,29 +25,19 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  reactive,
-  computed,
-  PropType
-} from "@vue/composition-api";
-import CommentItem from "@/components/CommentItem.vue";
-import CommentForm from "@/components/CommentForm.vue";
+import { defineComponent, computed, PropType } from "@vue/composition-api";
 import PostComment from "@/components/PostComment.vue";
-import { Comment } from "@/models/comment";
-import { Post } from "@/models/post";
-import { useStore } from "@/composables/use-store";
+import { IPost } from "@/models/post";
+import { usePost } from "@/composables/use-post";
 
 export default defineComponent({
   name: "post-item",
   components: {
-    CommentItem,
-    CommentForm,
     PostComment
   },
   props: {
     post: {
-      type: Object as PropType<Post>,
+      type: Object as PropType<IPost>,
       required: true
     },
     id: {
@@ -58,8 +46,7 @@ export default defineComponent({
     }
   },
   setup(props, { root }) {
-    const { deletePost } = useStore();
-    const commentList = reactive<Comment[]>(props.post.comments ?? []);
+    const { deletePost } = usePost();
     const goToEditPage = computed(() => ({
       name: root.$routeNames.EDIT_POST,
       params: { id: props.post.id }
@@ -67,7 +54,6 @@ export default defineComponent({
 
     return {
       deletePost,
-      commentList,
       goToEditPage
     };
   }
@@ -75,38 +61,33 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.row {
-  padding: 14px;
-  .col {
-    padding: 2px;
-  }
-  .panel {
-    background-color: white;
-    border-radius: 15px;
-    box-shadow: 5px 10px 20px #888888;
-  }
+.panel {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 5px 10px 20px #888888;
+}
 
-  textarea {
-    width: 80%;
-    margin: auto;
+textarea {
+  width: 80%;
+  margin: auto;
+}
+.post {
+  padding: 20px;
+  text-align: left;
+  margin-top: 10px;
+  .date {
+    text-align: right;
+    font-size: 14px;
   }
-  .post {
-    padding: 20px;
-    text-align: left;
-    .date {
-      text-align: right;
-      font-size: 14px;
+  .edit {
+    float: right;
+    span {
+      margin-left: 5px;
     }
-    .edit {
-      float: right;
-      span {
-        margin-left: 5px;
-      }
-    }
-    .add-comment {
-      margin-left: 10px;
-      margin-top: 10px;
-    }
+  }
+  .add-comment {
+    margin-left: 10px;
+    margin-top: 10px;
   }
 }
 </style>

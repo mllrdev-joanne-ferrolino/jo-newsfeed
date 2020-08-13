@@ -1,4 +1,4 @@
-import { Post } from "./models/post";
+import { IPost } from "./models/post";
 export const Store = {
-  post: [] as Post[]
+  posts: [] as IPost[]
 };

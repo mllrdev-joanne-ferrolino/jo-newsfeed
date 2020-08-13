@@ -7,7 +7,7 @@
     </router-link>
     <post-form
       :message-to-edit="message"
-      :postItem="storePosts[postIndex]"
+      :postItem="getPost(id)"
       :post-list="storePosts"
       :id="id"
     ></post-form>
@@ -17,7 +17,6 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from "@vue/composition-api";
 import PostForm from "@/components/PostForm.vue";
-import { Post } from "@/models/post";
 import { useStore } from "@/composables/use-store";
 export default defineComponent({
   name: "edit-post",
@@ -29,19 +28,17 @@ export default defineComponent({
     }
   },
   setup(props, { root }) {
-    const { storePosts, getIndex } = useStore();
-    const postIndex = getIndex(props.id);
+    const { storePosts, getPost } = useStore();
     const goToFeed = computed(() => ({
       name: root.$routeNames.FEED,
       params: { id: props.id }
     }));
-    const message = ref(storePosts[postIndex.value].message);
-
+    const message = ref(getPost(props.id).message);
     return {
       message,
       goToFeed,
       storePosts,
-      postIndex
+      getPost
     };
   }
 });

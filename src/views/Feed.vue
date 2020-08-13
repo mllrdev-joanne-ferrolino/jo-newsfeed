@@ -1,13 +1,12 @@
 <template>
   <div>
     <div class="container">
-      <post-form :post-list="storePosts"></post-form>
+      <post-form></post-form>
       <div class="panel">
         <div class="post" v-if="!storePosts.length">
           <span>There are no posts.</span>
         </div>
-      </div>
-      <div>
+
         <post-item
           v-for="(post, index) in storePosts"
           :key="post.id"

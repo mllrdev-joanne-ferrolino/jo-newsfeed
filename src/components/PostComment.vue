@@ -7,7 +7,7 @@
       :comment="comment"
       :post="post"
     ></comment-item>
-    <comment-form :post="post"></comment-form>
+    <comment-form class="add-comment" :post="post"></comment-form>
   </div>
 </template>
 
@@ -15,7 +15,8 @@
 import { defineComponent, reactive, PropType } from "@vue/composition-api";
 import CommentItem from "@/components/CommentItem.vue";
 import CommentForm from "@/components/CommentForm.vue";
-import { Post } from "@/models/post";
+import { IPost } from "@/models/post";
+import { IComment } from "@/models/comment";
 
 export default defineComponent({
   name: "post-comment",
@@ -25,12 +26,12 @@ export default defineComponent({
   },
   props: {
     post: {
-      type: Object as PropType<Post>,
+      type: Object as PropType<IPost>,
       required: true
     }
   },
   setup(props) {
-    const commentList = reactive(props.post.comments ?? []);
+    const commentList = reactive<IComment[]>(props.post.comments ?? []);
     return { commentList };
   }
 });

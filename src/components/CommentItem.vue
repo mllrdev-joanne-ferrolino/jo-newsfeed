@@ -6,10 +6,12 @@
         {{ comment.message }}
       </div>
       <comment-form
+        class="edit-comment"
         v-if="comment.isSelected"
         :message="commentToEdit"
         :post="post"
         :comment="comment"
+        :index="index"
       ></comment-form>
 
       <span class="buttons" v-if="!comment.isSelected">
@@ -29,11 +31,10 @@
 
 <script lang="ts">
 import { defineComponent, ref, reactive, PropType } from "@vue/composition-api";
-import { Comment } from "@/models/comment";
+import { IComment } from "@/models/comment";
 import CommentForm from "@/components/CommentForm.vue";
 import { useComment } from "@/composables/use-comment";
-import { useStore } from "@/composables/use-store";
-import { Post } from "@/models/post";
+import { IPost } from "@/models/post";
 
 export default defineComponent({
   name: "comment-item",
@@ -42,11 +43,11 @@ export default defineComponent({
   },
   props: {
     post: {
-      type: Object as PropType<Post>,
+      type: Object as PropType<IPost>,
       required: true
     },
     comment: {
-      type: Object as PropType<Comment>,
+      type: Object as PropType<IComment>,
       required: true
     },
     index: {
@@ -55,12 +56,11 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const commentList = reactive<Comment[]>(props.post?.comments ?? []);
+    const commentList = reactive<IComment[]>(props.post?.comments ?? []);
     const textComment = ref("");
     const commentToEdit = ref("");
     const isEmpty = ref(false);
     const { deleteComment } = useComment();
-    const { storePosts } = useStore();
 
     function selectComment(index: number) {
       commentList[index].isSelected = true;
@@ -73,8 +73,7 @@ export default defineComponent({
       deleteComment,
       selectComment,
       commentToEdit,
-      isEmpty,
-      storePosts
+      isEmpty
     };
   }
 });
