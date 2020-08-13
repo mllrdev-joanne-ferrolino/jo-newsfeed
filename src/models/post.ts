@@ -1,9 +1,9 @@
-import { Comment } from "./comment";
+import { IComment } from "./comment";
 
-export interface Post {
+export interface IPost {
   index: number;
   id: number;
   message: string;
   date: string;
-  comments?: Comment[];
+  comments?: IComment[];
 }
