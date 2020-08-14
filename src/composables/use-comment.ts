@@ -1,12 +1,10 @@
 import { IComment } from "./../models/comment";
 import { useStore } from "./use-store";
+import { usePost } from "./use-post";
 
 export function useComment() {
-  enum Label {
-    COMMENT = "Comment",
-    UPDATE = "Update"
-  }
-  const { storePosts, getIndex, getPost } = useStore();
+  const { storePosts, getIndex } = useStore();
+  const { getPost } = usePost();
   function getCommentList(postId: number) {
     const postIndex = getIndex(postId);
     return storePosts[postIndex].comments ?? [];
@@ -17,16 +15,16 @@ export function useComment() {
     return comments.length ? comments[comments.length - 1].id : 0;
   }
 
-  function addComment(postId: number, message: string) {
-    let commentId = getCommentId(postId);
+  function addComment(values: any) {
+    let commentId = getCommentId(values.postId);
     const comment: IComment = {
       id: commentId + 1,
-      postId: postId,
-      message: message,
+      postId: values.postId,
+      message: values.message,
       date: new Date().toLocaleString(),
       isSelected: false
     };
-    const post = getPost(postId);
+    const post = getPost(values.postId);
     post.comments?.push(comment);
     commentId++;
   }
@@ -35,10 +33,10 @@ export function useComment() {
     comments.splice(index, 1);
   }
 
-  function updateComment(postId: number, message: string, index: number) {
-    const comments = getCommentList(postId);
-    const commentItem = comments[index];
-    commentItem.message = message;
+  function updateComment(values: any) {
+    const comments = getCommentList(values.postId);
+    const commentItem = comments[values.index];
+    commentItem.message = values.message;
     commentItem.date = new Date().toLocaleString();
     commentItem.isSelected = false;
   }
@@ -52,7 +50,6 @@ export function useComment() {
     addComment,
     deleteComment,
     updateComment,
-    getSelectedComment,
-    Label
+    getSelectedComment
   };
 }

@@ -11,7 +11,7 @@
         <input
           class="btn btn-primary btn-sm"
           type="submit"
-          :value="message ? Label.UPDATE : Label.COMMENT"
+          :value="message ? label.UPDATE : label.COMMENT"
         />
         <input
           class="btn btn-primary btn-sm"
@@ -32,8 +32,8 @@ import {
   onMounted,
   PropType
 } from "@vue/composition-api";
-import { useComment } from "@/composables/use-comment";
 import { IComment } from "@/models/comment";
+import { CommentLabel } from "@/enums/comment-label.enum.ts";
 export default defineComponent({
   name: "comment-form",
   props: {
@@ -60,12 +60,16 @@ export default defineComponent({
     postId: {
       type: Number,
       required: true
+    },
+    values: {
+      type: Object,
+      required: false
     }
   },
-  setup(props) {
+  setup(props, { emit }) {
     const textComment = ref("");
     const isEmpty = ref(false);
-    const { addComment, updateComment, Label } = useComment();
+    const label = CommentLabel;
     onMounted(() => {
       if (props.message) {
         textComment.value = props.message;
@@ -76,9 +80,13 @@ export default defineComponent({
         isEmpty.value = true;
       } else {
         if (props.message) {
-          updateComment(props.comment.postId, textComment.value, props.index);
+          emit("values", {
+            postId: props.comment.postId,
+            message: textComment.value,
+            index: props.index
+          });
         } else {
-          addComment(props.postId, textComment.value);
+          emit("values", { postId: props.postId, message: textComment.value });
           textComment.value = "";
         }
         isEmpty.value = false;
@@ -89,7 +97,7 @@ export default defineComponent({
       handleComment,
       textComment,
       isEmpty,
-      Label
+      label
     };
   }
 });

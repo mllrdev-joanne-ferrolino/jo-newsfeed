@@ -1,22 +1,28 @@
 import { useStore } from "./use-store";
-import { IComment } from "../models/comment";
+import { IPost } from "../models/post";
 
 export function usePost() {
-  enum Label {
-    POST = "Post",
-    UPDATE = "Update"
+  const post: IPost = {
+    id: 0,
+    message: "",
+    date: "",
+    comments: []
+  };
+  const { storePosts, getIndex } = useStore();
+  function getPost(id: number) {
+    return storePosts.find((p: IPost) => p.id === id) ?? post;
   }
-  const { storePosts, getIndex, post } = useStore();
   function getPostId() {
     return storePosts.length ? storePosts[storePosts.length - 1].id : 0;
   }
   let postItemId = getPostId();
   function addPost(message: string) {
-    post.index = 0;
-    post.id = postItemId + 1;
-    post.comments = [];
-    post.message = message;
-    post.date = new Date().toLocaleString();
+    const post = {
+      id: postItemId + 1,
+      comments: [],
+      message: message,
+      date: new Date().toLocaleString()
+    };
     storePosts.push(post);
     postItemId++;
   }
@@ -24,20 +30,22 @@ export function usePost() {
     const postIndex = getIndex(id);
     storePosts.splice(postIndex, 1);
   }
-  function updatePost(message: string, comments: IComment[]) {
-    post.index = getIndex(postItemId);
-    post.id = postItemId;
-    post.message = message;
-    post.date = new Date().toLocaleString();
-    post.comments = comments;
-    storePosts[post.index] = post;
+  function updatePost(values: any) {
+    const post = {
+      id: values.post.id,
+      message: values.message,
+      date: new Date().toLocaleString(),
+      comments: values.post.comments
+    };
+
+    storePosts[getIndex(post.id)] = post;
   }
 
   return {
     addPost,
     deletePost,
     updatePost,
-    Label,
-    getPostId
+    getPostId,
+    getPost
   };
 }

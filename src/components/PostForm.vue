@@ -13,7 +13,7 @@
         <input
           class="btn btn-primary"
           type="submit"
-          :value="messageToEdit ? Label.UPDATE : Label.POST"
+          :value="messageToEdit ? label.UPDATE : label.POST"
         />
       </div>
     </form>
@@ -24,12 +24,12 @@
 import {
   defineComponent,
   ref,
-  onMounted,
-  PropType
+  PropType,
+  onMounted
 } from "@vue/composition-api";
 import router from "../router";
 import { IPost } from "@/models/post";
-import { usePost } from "@/composables/use-post";
+import { PostLabel } from "@/enums/post-label.enum";
 
 export default defineComponent({
   name: "post-form",
@@ -48,12 +48,15 @@ export default defineComponent({
         message: "",
         date: ""
       })
+    },
+    values: {
+      type: Object
     }
   },
-  setup(props, { root }) {
+  setup(props, { root, emit }) {
     const message = ref("");
     const isEmpty = ref(false);
-    const { addPost, updatePost, Label } = usePost();
+    const label = PostLabel;
 
     onMounted(() => {
       if (props.messageToEdit) {
@@ -65,10 +68,10 @@ export default defineComponent({
         isEmpty.value = true;
       } else {
         if (props.postItem.id) {
-          updatePost(message.value, props.postItem?.comments ?? []);
+          emit("values", { message: message.value, post: props.postItem });
           router.push({ name: root.$routeNames.FEED });
         } else {
-          addPost(message.value);
+          emit("message", message.value);
         }
         isEmpty.value = false;
         message.value = "";
@@ -79,7 +82,7 @@ export default defineComponent({
       handlePost,
       message,
       isEmpty,
-      Label
+      label
     };
   }
 });

@@ -10,7 +10,7 @@
           </router-link>
         </span>
         <span
-          ><button class="btn btn-primary" @click="deletePost(post.id)">
+          ><button class="btn btn-primary" @click="$emit('post', post)">
             Delete
           </button></span
         >
@@ -28,7 +28,6 @@
 import { defineComponent, computed, PropType } from "@vue/composition-api";
 import PostComment from "@/components/PostComment.vue";
 import { IPost } from "@/models/post";
-import { usePost } from "@/composables/use-post";
 
 export default defineComponent({
   name: "post-item",
@@ -42,14 +41,12 @@ export default defineComponent({
     }
   },
   setup(props, { root }) {
-    const { deletePost } = usePost();
     const goToEditPage = computed(() => ({
       name: root.$routeNames.EDIT_POST,
       params: { id: props.post.id }
     }));
 
     return {
-      deletePost,
       goToEditPage
     };
   }

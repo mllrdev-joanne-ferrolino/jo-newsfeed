@@ -12,6 +12,7 @@
         :comment="comment"
         :index="index"
         :postId="comment.postId"
+        @values="handleComment"
       ></comment-form>
 
       <span class="buttons" v-if="!comment.isSelected">
@@ -20,7 +21,7 @@
         </button>
         <button
           class="btn btn-primary btn-sm"
-          @click="deleteComment(comment.postId, index)"
+          @click="$emit('comment', comment)"
         >
           Delete
         </button>
@@ -33,7 +34,6 @@
 import { defineComponent, ref, PropType } from "@vue/composition-api";
 import { IComment } from "@/models/comment";
 import CommentForm from "@/components/CommentForm.vue";
-import { useComment } from "@/composables/use-comment";
 
 export default defineComponent({
   name: "comment-item",
@@ -48,23 +48,27 @@ export default defineComponent({
     index: {
       type: Number,
       required: true
+    },
+    values: {
+      type: Object
     }
   },
-  setup(props) {
+  setup(props, { emit }) {
     const textComment = ref("");
     const isEmpty = ref(false);
-    const { deleteComment, getSelectedComment } = useComment();
 
     function selectComment(index: number) {
-      const commentItem = getSelectedComment(props.comment.postId, index);
-      textComment.value = commentItem.message;
+      textComment.value = props.comment.message;
+      emit("index", index);
     }
-
+    function handleComment(values: any) {
+      emit("values", values);
+    }
     return {
-      deleteComment,
       selectComment,
       textComment,
-      isEmpty
+      isEmpty,
+      handleComment
     };
   }
 });

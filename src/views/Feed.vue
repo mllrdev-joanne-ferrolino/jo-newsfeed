@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="container">
-      <post-form></post-form>
+      <post-form @message="addPost"></post-form>
       <div class="panel">
         <div class="post" v-if="!storePosts.length">
           <span>There are no posts.</span>
@@ -11,6 +11,7 @@
           v-for="post in storePosts"
           :key="post.id"
           :post="post"
+          @post="deletePost(post.id)"
         ></post-item>
       </div>
     </div>
@@ -22,6 +23,7 @@ import PostItem from "@/components/PostItem.vue";
 import PostForm from "@/components/PostForm.vue";
 import { defineComponent } from "@vue/composition-api";
 import { useStore } from "@/composables/use-store";
+import { usePost } from "@/composables/use-post";
 
 export default defineComponent({
   name: "Feed",
@@ -31,7 +33,8 @@ export default defineComponent({
   },
   setup() {
     const { storePosts } = useStore();
-    return { storePosts };
+    const { deletePost, addPost } = usePost();
+    return { storePosts, deletePost, addPost };
   }
 });
 </script>
