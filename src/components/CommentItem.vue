@@ -2,8 +2,10 @@
   <div class="add-comment">
     <div class="comment">
       <div class="message">
-        Commented {{ comment.date }} -
-        {{ comment.message }}
+        <p style="">
+          Commented {{ comment.date }}
+          {{ comment.message }}
+        </p>
       </div>
       <comment-form
         class="edit-comment"
@@ -12,7 +14,7 @@
         :comment="comment"
         :index="index"
         :postId="comment.postId"
-        @values="handleComment"
+        @updateParams="updateComment"
       ></comment-form>
 
       <span class="buttons" v-if="!comment.isSelected">
@@ -34,6 +36,7 @@
 import { defineComponent, ref, PropType } from "@vue/composition-api";
 import { IComment } from "@/models/comment";
 import CommentForm from "@/components/CommentForm.vue";
+import { IUseCommentUpdateParams } from "@/models/useCommentUpdateParams";
 
 export default defineComponent({
   name: "comment-item",
@@ -50,7 +53,7 @@ export default defineComponent({
       required: true
     },
     values: {
-      type: Object
+      type: Object as PropType<IUseCommentUpdateParams>
     }
   },
   setup(props, { emit }) {
@@ -61,14 +64,14 @@ export default defineComponent({
       textComment.value = props.comment.message;
       emit("index", index);
     }
-    function handleComment(values: any) {
-      emit("values", values);
+    function updateComment(values: IUseCommentUpdateParams) {
+      emit("updateParams", values);
     }
     return {
       selectComment,
       textComment,
       isEmpty,
-      handleComment
+      updateComment
     };
   }
 });
@@ -79,12 +82,15 @@ export default defineComponent({
   .comment {
     background-color: #ebedf0;
     border-radius: 10px;
-
     margin-bottom: 5px;
     .message {
       padding: 15px;
       width: 80%;
       display: inline-flex;
+      p {
+        margin: auto;
+        width: 70vw;
+      }
     }
     button {
       margin-left: 5px;

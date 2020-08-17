@@ -22,6 +22,7 @@ import PostForm from "@/components/PostForm.vue";
 import Modal from "@/components/Modal.vue";
 import { usePost } from "@/composables/use-post";
 import { AlertMessage } from "@/enums/alert-messages.enum";
+import { IUsePostUpdateParams } from "@/models/usePostUpdateParams";
 import router from "../router";
 
 export default defineComponent({
@@ -43,7 +44,7 @@ export default defineComponent({
     const isModalVisible = ref(false);
     const action = ref("");
 
-    function updateSelectedPost(values: any) {
+    function updateSelectedPost(values: IUsePostUpdateParams) {
       isModalVisible.value = true;
       action.value = updatePost(values)
         ? AlertMessage.UPDATE_SUCCESS

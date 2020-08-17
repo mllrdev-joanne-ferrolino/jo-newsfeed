@@ -1,5 +1,6 @@
 import { useStore } from "./use-store";
 import { IPost } from "../models/post";
+import { IUsePostUpdateParams } from "@/models/usePostUpdateParams";
 
 export function usePost() {
   const post: IPost = {
@@ -35,12 +36,12 @@ export function usePost() {
     const postIndex = getIndex(id);
     return storePosts.splice(postIndex, 1) ? true : false;
   }
-  function updatePost(values: any) {
+  function updatePost(values: IUsePostUpdateParams) {
     const post = {
-      id: values.post.id,
+      id: values.id,
       message: values.message,
       date: new Date().toLocaleString(),
-      comments: values.post.comments
+      comments: values.comments
     };
     if (post) {
       storePosts[getIndex(post.id)] = post;

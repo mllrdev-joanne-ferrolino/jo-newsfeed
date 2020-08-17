@@ -1,6 +1,8 @@
 import { IComment } from "./../models/comment";
 import { useStore } from "./use-store";
 import { usePost } from "./use-post";
+import { IUseCommentAddParams } from "@/models/useCommentAddParams";
+import { IUseCommentUpdateParams } from "@/models/useCommentUpdateParams";
 
 export function useComment() {
   const { storePosts, getIndex } = useStore();
@@ -15,7 +17,7 @@ export function useComment() {
     return comments.length ? comments[comments.length - 1].id : 0;
   }
 
-  function addComment(values: any) {
+  function addComment(values: IUseCommentAddParams) {
     let commentId = getCommentId(values.postId);
     const comment: IComment = {
       id: commentId + 1,
@@ -37,7 +39,7 @@ export function useComment() {
     return comments.splice(index, 1) ? true : false;
   }
 
-  function updateComment(values: any) {
+  function updateComment(values: IUseCommentUpdateParams) {
     const comments = getCommentList(values.postId);
     if (comments) {
       const commentItem = comments[values.index];

@@ -7,12 +7,12 @@
       :comment="comment"
       @index="getSelectedComment(comment.postId, index)"
       @comment="deleteSelectedComment(comment.postId, index)"
-      @values="updateSelectedComment"
+      @updateParams="updateSelectedComment"
     ></comment-item>
     <comment-form
       class="add-comment"
       :postId="post.id"
-      @values="addCommentToList"
+      @addParams="addCommentToList"
     ></comment-form>
     <modal v-show="isModalVisible" @close="isModalVisible = false">
       <template v-slot:body>
@@ -31,6 +31,8 @@ import { IComment } from "@/models/comment";
 import { useComment } from "@/composables/use-comment";
 import Modal from "@/components/Modal.vue";
 import { AlertMessage } from "@/enums/alert-messages.enum";
+import { IUseCommentAddParams } from "@/models/useCommentAddParams";
+import { IUseCommentUpdateParams } from "@/models/useCommentUpdateParams";
 
 export default defineComponent({
   name: "post-comment",
@@ -67,14 +69,14 @@ export default defineComponent({
         : AlertMessage.COMMENT_DELETE_FAIL;
     }
 
-    function addCommentToList(values: any) {
+    function addCommentToList(values: IUseCommentAddParams) {
       isModalVisible.value = true;
       action.value = addComment(values)
         ? AlertMessage.COMMENT_ADD_SUCCESS
         : AlertMessage.COMMENT_ADD_FAIL;
     }
 
-    function updateSelectedComment(values: any) {
+    function updateSelectedComment(values: IUseCommentUpdateParams) {
       isModalVisible.value = true;
       action.value = updateComment(values)
         ? AlertMessage.COMMENT_UPDATE_SUCCESS

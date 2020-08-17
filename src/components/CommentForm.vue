@@ -34,6 +34,8 @@ import {
 } from "@vue/composition-api";
 import { IComment } from "@/models/comment";
 import { CommentLabel } from "@/enums/comment-label.enum.ts";
+import { IUseCommentUpdateParams } from "@/models/useCommentUpdateParams";
+import { IUseCommentAddParams } from "@/models/useCommentAddParams";
 export default defineComponent({
   name: "comment-form",
   props: {
@@ -61,8 +63,12 @@ export default defineComponent({
       type: Number,
       required: true
     },
-    values: {
-      type: Object,
+    updateParams: {
+      type: Object as PropType<IUseCommentUpdateParams>,
+      required: false
+    },
+    addParams: {
+      type: Object as PropType<IUseCommentAddParams>,
       required: false
     }
   },
@@ -80,13 +86,16 @@ export default defineComponent({
         isEmpty.value = true;
       } else {
         if (props.message) {
-          emit("values", {
+          emit("updateParams", {
             postId: props.comment.postId,
             message: textComment.value,
             index: props.index
           });
         } else {
-          emit("values", { postId: props.postId, message: textComment.value });
+          emit("addParams", {
+            postId: props.postId,
+            message: textComment.value
+          });
           textComment.value = "";
         }
         isEmpty.value = false;

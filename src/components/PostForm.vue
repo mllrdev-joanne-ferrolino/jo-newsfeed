@@ -29,6 +29,7 @@ import {
 } from "@vue/composition-api";
 import { IPost } from "@/models/post";
 import { PostLabel } from "@/enums/post-label.enum";
+import { IUsePostUpdateParams } from "@/models/usePostUpdateParams";
 
 export default defineComponent({
   name: "post-form",
@@ -49,7 +50,7 @@ export default defineComponent({
       })
     },
     values: {
-      type: Object
+      type: Object as PropType<IUsePostUpdateParams>
     }
   },
   setup(props, { emit }) {
@@ -67,7 +68,11 @@ export default defineComponent({
         isEmpty.value = true;
       } else {
         if (props.postItem.id) {
-          emit("values", { message: message.value, post: props.postItem });
+          emit("values", {
+            id: props.postItem.id,
+            message: message.value,
+            comments: props.postItem.comments
+          });
         } else {
           emit("message", message.value);
         }

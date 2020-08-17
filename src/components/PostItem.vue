@@ -68,6 +68,7 @@ textarea {
   padding: 20px;
   text-align: left;
   margin-top: 10px;
+  word-wrap: break-word;
   .date {
     text-align: right;
     font-size: 14px;
