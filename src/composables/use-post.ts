@@ -23,12 +23,17 @@ export function usePost() {
       message: message,
       date: new Date().toLocaleString()
     };
-    storePosts.push(post);
-    postItemId++;
+
+    if (storePosts.push(post)) {
+      postItemId++;
+    } else {
+      return false;
+    }
+    return true;
   }
   function deletePost(id: number) {
     const postIndex = getIndex(id);
-    storePosts.splice(postIndex, 1);
+    return storePosts.splice(postIndex, 1) ? true : false;
   }
   function updatePost(values: any) {
     const post = {
@@ -37,8 +42,12 @@ export function usePost() {
       date: new Date().toLocaleString(),
       comments: values.post.comments
     };
-
-    storePosts[getIndex(post.id)] = post;
+    if (post) {
+      storePosts[getIndex(post.id)] = post;
+    } else {
+      return false;
+    }
+    return true;
   }
 
   return {

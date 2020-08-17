@@ -25,20 +25,29 @@ export function useComment() {
       isSelected: false
     };
     const post = getPost(values.postId);
-    post.comments?.push(comment);
-    commentId++;
+    if (post.comments?.push(comment)) {
+      commentId++;
+    } else {
+      return false;
+    }
+    return true;
   }
   function deleteComment(postId: number, index: number) {
     const comments = getCommentList(postId);
-    comments.splice(index, 1);
+    return comments.splice(index, 1) ? true : false;
   }
 
   function updateComment(values: any) {
     const comments = getCommentList(values.postId);
-    const commentItem = comments[values.index];
-    commentItem.message = values.message;
-    commentItem.date = new Date().toLocaleString();
-    commentItem.isSelected = false;
+    if (comments) {
+      const commentItem = comments[values.index];
+      commentItem.message = values.message;
+      commentItem.date = new Date().toLocaleString();
+      commentItem.isSelected = false;
+    } else {
+      return false;
+    }
+    return true;
   }
 
   function getSelectedComment(postId: number, index: number) {

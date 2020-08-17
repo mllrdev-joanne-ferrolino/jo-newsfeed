@@ -27,7 +27,6 @@ import {
   PropType,
   onMounted
 } from "@vue/composition-api";
-import router from "../router";
 import { IPost } from "@/models/post";
 import { PostLabel } from "@/enums/post-label.enum";
 
@@ -53,7 +52,7 @@ export default defineComponent({
       type: Object
     }
   },
-  setup(props, { root, emit }) {
+  setup(props, { emit }) {
     const message = ref("");
     const isEmpty = ref(false);
     const label = PostLabel;
@@ -69,7 +68,6 @@ export default defineComponent({
       } else {
         if (props.postItem.id) {
           emit("values", { message: message.value, post: props.postItem });
-          router.push({ name: root.$routeNames.FEED });
         } else {
           emit("message", message.value);
         }

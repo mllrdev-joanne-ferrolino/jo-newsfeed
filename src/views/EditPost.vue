@@ -8,18 +8,25 @@
     <post-form
       :message-to-edit="message"
       :postItem="getPost(id)"
-      @values="updatePost"
+      @values="updateSelectedPost"
     ></post-form>
+    <modal v-show="isModalVisible" @close="closeModal">
+      <template v-slot:body>{{ action }}</template>
+    </modal>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "@vue/composition-api";
+import { defineComponent, computed, ref } from "@vue/composition-api";
 import PostForm from "@/components/PostForm.vue";
+import Modal from "@/components/Modal.vue";
 import { usePost } from "@/composables/use-post";
+import { AlertMessage } from "@/enums/alert-messages.enum";
+import router from "../router";
+
 export default defineComponent({
   name: "edit-post",
-  components: { PostForm },
+  components: { PostForm, Modal },
   props: {
     id: {
       type: Number,
@@ -33,11 +40,28 @@ export default defineComponent({
       params: { id: props.id }
     }));
     const message = getPost(props.id).message;
+    const isModalVisible = ref(false);
+    const action = ref("");
+
+    function updateSelectedPost(values: any) {
+      isModalVisible.value = true;
+      action.value = updatePost(values)
+        ? AlertMessage.UPDATE_SUCCESS
+        : AlertMessage.UPDATE_FAIL;
+    }
+
+    function closeModal() {
+      isModalVisible.value = false;
+      router.push({ name: root.$routeNames.FEED });
+    }
     return {
       message,
       goToFeed,
       getPost,
-      updatePost
+      updateSelectedPost,
+      isModalVisible,
+      action,
+      closeModal
     };
   }
 });

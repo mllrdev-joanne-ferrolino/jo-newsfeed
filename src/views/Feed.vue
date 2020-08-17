@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="container">
-      <post-form @message="addPost"></post-form>
+      <post-form @message="addToPostList"></post-form>
       <div class="panel">
         <div class="post" v-if="!storePosts.length">
           <span>There are no posts.</span>
@@ -11,8 +11,14 @@
           v-for="post in storePosts"
           :key="post.id"
           :post="post"
-          @post="deletePost(post.id)"
+          @post="deleteSelectedPost(post.id)"
         ></post-item>
+
+        <modal v-show="isModalVisible" @close="isModalVisible = false">
+          <template v-slot:body>
+            {{ action }}
+          </template>
+        </modal>
       </div>
     </div>
   </div>
@@ -21,20 +27,45 @@
 <script lang="ts">
 import PostItem from "@/components/PostItem.vue";
 import PostForm from "@/components/PostForm.vue";
-import { defineComponent } from "@vue/composition-api";
+import { defineComponent, ref } from "@vue/composition-api";
 import { useStore } from "@/composables/use-store";
 import { usePost } from "@/composables/use-post";
+import Modal from "@/components/Modal.vue";
+import { AlertMessage } from "@/enums/alert-messages.enum";
 
 export default defineComponent({
   name: "Feed",
   components: {
     PostItem,
-    PostForm
+    PostForm,
+    Modal
   },
   setup() {
     const { storePosts } = useStore();
     const { deletePost, addPost } = usePost();
-    return { storePosts, deletePost, addPost };
+    const isModalVisible = ref(false);
+    const action = ref("");
+
+    function deleteSelectedPost(id: number) {
+      isModalVisible.value = true;
+      action.value = deletePost(id)
+        ? AlertMessage.DELETE_SUCCESS
+        : AlertMessage.DELETE_FAIL;
+    }
+
+    function addToPostList(message: string) {
+      isModalVisible.value = true;
+      action.value = addPost(message)
+        ? AlertMessage.ADD_SUCCESS
+        : AlertMessage.ADD_FAIL;
+    }
+    return {
+      storePosts,
+      deleteSelectedPost,
+      addToPostList,
+      isModalVisible,
+      action
+    };
   }
 });
 </script>
